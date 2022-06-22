@@ -5,10 +5,10 @@
 var gunImg, bubbleImg, bulletImg, blastImg, backBoardImg, resetImg;
 var gun,bluebubble,redbubble, bullet, backBoard, reset;
 var redBubbleGroup, redBubbleGroup, bulletGroup;
+var theme, shot, bubble, fail, lose, click;
 var gameState = 1, score = 0, life = 3;
 var ball, ballImg, heart, heratImg;
 var control = "up", tipe = true;
-var theme;
 
 function preload(){
   blueBubbleImg = loadImage("Images/blueBubble.png");
@@ -23,7 +23,12 @@ function preload(){
   ballImg = loadImage("Images/ball.png");
   gunImg = loadImage("Images/gun1.png");
 
+  bubble = loadSound("./Music/bubble.mp3");
   theme = loadSound("./Music/theme.mp3");
+  click = loadSound("./Music/click.mp3");
+  shot = loadSound("./Music/shot.mp3");
+  fail = loadSound("./Music/fail.mp3");
+  lose = loadSound("./Music/lose.mp3");
 }
 
 function setup(){
@@ -117,6 +122,7 @@ function shootBullet(){
     bullet.y = gun.y-34;    
     bullet.scale = 0.12;
     bullet.depth = 1;
+    shot.play();
   }
 
   if(mouseDown("leftButton")){
@@ -132,24 +138,29 @@ function shootBullet(){
 function collisions(){
   if (redBubbleGroup.collide(backBoard)){
     redBubbleGroup.destroyEach();
+    fail.play();
     life -= 1;
   }
 
   if (blueBubbleGroup.collide(backBoard)){
     blueBubbleGroup.destroyEach();
+    fail.play();
     life -= 1;
   }
 
   if(life === 0){
     gameState = 2;
+    lose.play();
   }
 
   if(blueBubbleGroup.collide(bulletGroup)){
     handleBlueBubbleCollision(blueBubbleGroup);
+    bubble.play();
   }
 
   if(redBubbleGroup.collide(bulletGroup)){
     handleRedBubbleCollision(redBubbleGroup);
+    bubble.play();
   }
 }
 
@@ -252,6 +263,7 @@ function resetGame(){
     reset.visible = false;
     life = 3, score = 0;
     gameState = 1;
+    click.play();
     tipe = true;
   }
 }
