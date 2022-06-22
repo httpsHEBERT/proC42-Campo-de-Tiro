@@ -2,11 +2,11 @@
 // (҂`_´) - I NEED BUBBLES
 // <;︻╦╤─ ҉ - - - - - - -
 
-var gunImg, bubbleImg, bulletImg, blastImg, backBoardImg, resetImg;
-var gun,bluebubble,redbubble, bullet, backBoard, reset;
+var gun, c1, c2, c3, c4, c5, c6, bluebubble,redbubble, bullet, backBoard, reset;
+var gunImg, chargeImg, bubbleImg, bulletImg, blastImg, backBoardImg, resetImg;
+var gameState = 1, score = 0, ammunition = 6; life = 3;
+var theme, shot, recharge, bubble, fail, lose, click;
 var redBubbleGroup, redBubbleGroup, bulletGroup;
-var theme, shot, bubble, fail, lose, click;
-var gameState = 1, score = 0, life = 3;
 var ball, ballImg, heart, heratImg;
 var control = "up", tipe = true;
 
@@ -16,13 +16,15 @@ function preload(){
   blueBlastImg = loadImage("Images/blueBlast.png");
   redBlastImg = loadImage("Images/redBlast.png");
   backBoardImg = loadImage("Images/board.jpg");
-  bulletImg = loadImage("Images/bullet1.png");
+  bulletImg = loadImage("Images/bullet.png");
+  chargeImg = loadImage("Images/charge.png");
   resetImg = loadImage("Images/reset.png");
   heratImg = loadImage("Images/heart.png");
   bg = loadImage("Images/background.jpg");
   ballImg = loadImage("Images/ball.png");
-  gunImg = loadImage("Images/gun1.png");
+  gunImg = loadImage("Images/gun.png");
 
+  recharge = loadSound("./Music/recharge.mp3");
   bubble = loadSound("./Music/bubble.mp3");
   theme = loadSound("./Music/theme.mp3");
   click = loadSound("./Music/click.mp3");
@@ -42,6 +44,36 @@ function setup(){
   gun.addImage(gunImg);
   gun.scale = 0.2;
   gun.depth = 2;
+
+  c1 = createSprite(width-30, height-height+50);
+  c1.addImage(chargeImg);
+  c1.scale = 0.3;
+  c1.depth = 2;
+
+  c2 = createSprite(width-50, height-height+50);
+  c2.addImage(chargeImg);
+  c2.scale = 0.3;
+  c2.depth = 2;
+
+  c3 = createSprite(width-70, height-height+50);
+  c3.addImage(chargeImg);
+  c3.scale = 0.3;
+  c3.depth = 2;
+
+  c4 = createSprite(width-90, height-height+50);
+  c4.addImage(chargeImg);
+  c4.scale = 0.3;
+  c4.depth = 2;
+
+  c5 = createSprite(width-110, height-height+50);
+  c5.addImage(chargeImg);
+  c5.scale = 0.3;
+  c5.depth = 2;
+
+  c6 = createSprite(width-130, height-height+50);
+  c6.addImage(chargeImg);
+  c6.scale = 0.3;
+  c6.depth = 2;
 
   ball = createSprite(width-width+106, height-height+60);
   ball.addImage(ballImg);
@@ -80,6 +112,7 @@ function draw(){
     
     shootBullet();
     collisions();
+    charges();
   }
   
   if(gameState === 2){
@@ -112,17 +145,31 @@ function drawRedBubble(){
   redBubbleGroup.add(redbubble);
 }
 
-function shootBullet(){
-  
-  if(mouseDown("leftButton") && control === "up"){
-    bullet = createSprite(gun.x+100, width/2, 50,20);
-    bullet.addImage(bulletImg);
-    bulletGroup.add(bullet);
-    bullet.velocityX = 7;
-    bullet.y = gun.y-34;    
-    bullet.scale = 0.12;
-    bullet.depth = 1;
-    shot.play();
+function shootBullet(){ 
+  if(ammunition > 0){
+    if(mouseDown("leftButton") && control === "up"){
+      bullet = createSprite(gun.x+100, width/2, 50,20);
+      bullet.addImage(bulletImg);
+      bulletGroup.add(bullet);
+      bullet.velocityX = 7;
+      bullet.y = gun.y-34;    
+      bullet.scale = 0.12;
+      bullet.depth = 1;
+      ammunition -= 1;
+      shot.play();
+    }
+  }
+
+  if(ammunition === 0){
+    fill(0);
+    noStroke();
+    textSize(25);
+    text("Aperte 'ESPAÇO' para recarregar!", width-width+250, height-height+30);
+
+    if(keyDown("SPACE")){
+      recharge.play();
+      ammunition = 6;
+    }
   }
 
   if(mouseDown("leftButton")){
@@ -161,6 +208,44 @@ function collisions(){
   if(redBubbleGroup.collide(bulletGroup)){
     handleRedBubbleCollision(redBubbleGroup);
     bubble.play();
+  }
+}
+
+function charges(){
+  if(ammunition > 5){
+    c6.visible = true;
+  }else{
+    c6.visible = false;
+  }
+
+  if(ammunition > 4){
+    c5.visible = true;
+  }else{
+    c5.visible = false;
+  }
+
+  if(ammunition > 3){
+    c4.visible = true;
+  }else{
+    c4.visible = false;
+  }
+
+  if(ammunition > 2){
+    c3.visible = true;
+  }else{
+    c3.visible = false;
+  }
+
+  if(ammunition > 1){
+    c2.visible = true;
+  }else{
+    c2.visible = false;
+  }
+
+  if(ammunition > 0){
+    c1.visible = true;
+  }else{
+    c1.visible = false;
   }
 }
 
@@ -262,6 +347,7 @@ function resetGame(){
   if(mousePressedOver(reset)){
     reset.visible = false;
     life = 3, score = 0;
+    ammunition = 6;
     gameState = 1;
     click.play();
     tipe = true;
