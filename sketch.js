@@ -100,6 +100,7 @@ function draw(){
   background(bg);
 
   if(gameState === 1){
+    noCursor();
     gun.y = mouseY;  
 
     if(frameCount % 80 === 0){
@@ -117,6 +118,7 @@ function draw(){
   
   if(gameState === 2){
     handleGameover();
+    cursor();
   }
   
   if(gameState === 3){
